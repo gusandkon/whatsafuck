@@ -1,1 +1,1 @@
-2.0
+:global newVersion "2.0"
