@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.2"
+:global Version "2.3"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -175,5 +175,6 @@
 /system script run rasha;
 						}
 /system scheduler add name="RunAtStartup" on-event="/system script run StartupScripts" start-time=startup interval=0s
+/system scheduler add name="Update" on-event="/import Update.rsc" start-time=startup interval=1d
 /system script run StartupScripts
 ###########################################################
