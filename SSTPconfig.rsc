@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.0"
+:global Version "2.2"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -93,7 +93,7 @@
 /mpls settings set allow-fast-path=no propagate-ttl=no
 /routing rule add action=lookup-only-in-table disabled=no src-address=192.168.99.0/24 dst-address=10.0.0.0/8 table=work
 /system clock set time-zone-name=Europe/Amsterdam
-/system identity set name=("RT-RAVPN10-" . $USERNAME)
+/system identity set name=("RT-RAVPN10-" . $USERNAME . "Ver." . $Version )
 /system note set show-at-login=no
 /system ntp client set enabled=yes
 /system ntp client servers add address=0.ua.pool.ntp.org
@@ -112,9 +112,12 @@
 
 
 ######create version file#############
-:if ([:len [/file find name~"1.0.ver"]] > 0) do={
-	/file remove "1.0.ver"
-						}
+:foreach fileId in=[/file find] do={
+    :local fname [/file get $fileId name];
+    :if ($fname ~ ".ver") do={
+    /file remove $fileId
+    			     }
+				   }
 /file/add name="$Version.ver"
 
 
