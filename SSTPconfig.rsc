@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.1"
+:global Version "2.0"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -112,7 +112,12 @@
 
 
 ######create version file#############
+:if ([:len [/file find name~"1.0.ver"]] > 0) do={
+	/file remove "1.0.ver"
+						}
 /file/add name="$Version.ver"
+
+
 ############whatsapp###########
 /system script add name="WhatsApp" source={
 :if ([:len [/file find name="whatsapp_cidr_ipv4.rsc"]] > 0) do={
@@ -162,7 +167,6 @@
 #########Startup script##############
 /system script add name=StartupScripts source={
 /import credentials.rsc
-/import Update.rsc
 /system script run ImportCert;
 /system script run WhatsApp;
 /system script run rasha;
