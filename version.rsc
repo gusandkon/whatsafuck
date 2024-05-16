@@ -1,2 +1,2 @@
-:global newVersion "2.3"
+:global newVersion "2.31"
 :global reqrosver "7.14.3"
