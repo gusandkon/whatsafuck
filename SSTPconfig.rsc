@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.38"
+:global Version "2.39"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -123,15 +123,18 @@
 
 ############whatsapp###########
 /system script add name="WhatsApp" source={
+:log info "Run import WhatsApp list"
 :if ([:len [/file find name="whatsapp_cidr_ipv4.rsc"]] > 0) do={
     /file remove [find name="whatsapp_cidr_ipv4.rsc"]
 }
 /tool/fetch url="https://raw.githubusercontent.com/HybridNetworks/whatsapp-cidr/main/WhatsApp/whatsapp_cidr_ipv4.rsc";
 :delay 10s;
 :if ([:len [/file find name="whatsapp_cidr_ipv4.rsc"]] > 0) do={
+:log info "WhatsApp list download succesfully"
     /ip firewall address-list remove [find comment="WHATSAPP-CIDR"]
 }
 /import whatsapp_cidr_ipv4.rsc
+:log info "Import WhatsApp list complete"
 }
 /ip firewall nat add action=masquerade chain=srcnat out-interface=SSTP-Work src-address=192.168.99.0/24 dst-address-list=WHATSAPP-CIDR 
 /routing table add fib name=whatsapp
@@ -140,7 +143,9 @@
 #############end##############
 
 ############russia###########
+
 /system script add name="rasha" source={
+:log info "Run import list to Russia"
 :if ([:len [/file find name="rasha.rsc"]] > 0) do={
 /file remove [find name="rasha.rsc"]
 }
@@ -149,6 +154,7 @@
 :if ([:len [/file find name="rasha.rsc"]] > 0) do={
 /ip firewall address-list remove [find comment="rasha"]
 /import rasha.rsc
+:log info "Import Russia list successful"
 }
 }
 /ip firewall nat add action=masquerade chain=srcnat out-interface=SSTP-Work src-address=192.168.99.0/24 dst-address-list=RASHA
@@ -158,17 +164,21 @@
 #############end of russia##############
 
 ############letsencrypt#################
+
 /system script add name="ImportCert" source={
+:log info "Run LetsEncrypt Script"
 :local importSuccess false;
 :while ($importSuccess = false) do={
 :if ([:len [/file find name="isrgrootx1.der"]] = 0) do={
 /tool fetch url="https://letsencrypt.org/certs/isrgrootx1.der" mode=https dst-path="isrgrootx1.der";
 :delay 1s;
+:log info "Retry to download LetsEncryp certificate"
 }
 :if ([:len [/file find name="isrgrootx1.der"]] > 0) do={
 /certificate import file-name="isrgrootx1.der" name="ISRG Root X1"
 :local certExists [:len [/certificate find where name="ISRG Root X1"]];
 :if ($certExists > 0) do={
+:log info "Import LetsEncrypt certificate successful"
 :set importSuccess true
 }
 }
