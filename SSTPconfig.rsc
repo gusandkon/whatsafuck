@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.3"
+:global Version "2.31"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -131,7 +131,7 @@
 :if ([:len [/file find name="whatsapp_cidr_ipv4.rsc"]] > 0) do={
     /ip firewall address-list remove [find comment="WHATSAPP-CIDR"]
 }
-/import whatsapp_cidr_ipv4.rsc
+/import whatsapp_cidr_ipv4.rsc verbose=yes
 }
 /ip firewall nat add action=masquerade chain=srcnat out-interface=SSTP-Work src-address=192.168.99.0/24 dst-address-list=WHATSAPP-CIDR 
 /routing table add fib name=whatsapp
@@ -142,15 +142,15 @@
 ############russia###########
 /system script add name="rasha" source={
 :if ([:len [/file find name="rasha.rsc"]] > 0) do={
-    /file remove [find name="rasha.rsc"]
-						}
+/file remove [find name="rasha.rsc"]
+}
 /tool/fetch url="https://raw.githubusercontent.com/gusandkon/whatsafuck/main/rasha.rsc";
 :delay 10s;
 :if ([:len [/file find name="rasha.rsc"]] > 0) do={
-    /ip firewall address-list remove [find comment="rasha"]
-    /import rasha.rsc
-						}
-					}
+/ip firewall address-list remove [find comment="rasha"]
+/import rasha.rsc verbose=yes
+}
+}
 /ip firewall nat add action=masquerade chain=srcnat out-interface=SSTP-Work src-address=192.168.99.0/24 dst-address-list=RASHA
 /routing table add fib name=rus
 /ip route add dst-address=0.0.0.0/0 gateway=SSTP-Work routing-table=rus
@@ -163,18 +163,23 @@
     /tool fetch url="https://letsencrypt.org/certs/isrgrootx1.der" mode=https dst-path="isrgrootx1.der";
     :delay 10s;
     /certificate import file-name="isrgrootx1.der" name="ISRG Root X1";
-    }
+}
 }
 #############end of Letsencrypt##############
 
 #########Startup script##############
 /system script add name=StartupScripts source={
+:delay 30s;
 /import credentials.rsc
 /system script run ImportCert;
 /system script run WhatsApp;
 /system script run rasha;
-						}
-/system scheduler add name="RunAtStartup" on-event="/system script run StartupScripts" start-time=startup interval=0s
+}
+/system scheduler add name="StartupScripts" on-event="/system script run StartupScripts" start-time=startup interval=0
+/system scheduler add name="UpdateOnboot" on-event="/import Update.rsc" start-time=startup interval=0
+/system scheduler add name="WhatsApp" on-event="/system script run WhatsApp" start-time=startup interval=48h
+/system scheduler add name="rasha" on-event="/system script run rasha" start-time=startup interval=6h
 /system scheduler add name="Update" on-event="/import Update.rsc" start-time=startup interval=1d
+/system scheduler add name="CertUpdate" on-event="/system script run ImportCert" start-time=startup interval=1m
 /system script run StartupScripts
 ###########################################################
