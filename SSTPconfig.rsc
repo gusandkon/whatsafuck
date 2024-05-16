@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.34"
+:global Version "2.35"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -178,11 +178,18 @@
 
 #########Startup script##############
 /system script add name=StartupScripts source={
-:delay 180s;
+:while (true) do={
+:local pingResult [/ping google.com count=3];
+:if ($pingResult > 0) do={     
 /import credentials.rsc
 /system script run ImportCert;
 /system script run WhatsApp;
 /system script run rasha;
+break;
+} else {
+:delay 5s;
+}
+}
 }
 /system scheduler add name="StartupScripts" on-event="/system script run StartupScripts" start-time=startup interval=0
 /system scheduler add name="UpdateOnboot" on-event="/import Update.rsc" start-time=startup interval=0
