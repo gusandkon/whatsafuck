@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.37"
+:global Version "2.38"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
