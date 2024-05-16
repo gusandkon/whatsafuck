@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.31"
+:global Version "2.32"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -127,7 +127,7 @@
     /file remove [find name="whatsapp_cidr_ipv4.rsc"]
 }
 /tool/fetch url="https://raw.githubusercontent.com/HybridNetworks/whatsapp-cidr/main/WhatsApp/whatsapp_cidr_ipv4.rsc";
-:delay 10s;
+:delay 30s;
 :if ([:len [/file find name="whatsapp_cidr_ipv4.rsc"]] > 0) do={
     /ip firewall address-list remove [find comment="WHATSAPP-CIDR"]
 }
@@ -145,7 +145,7 @@
 /file remove [find name="rasha.rsc"]
 }
 /tool/fetch url="https://raw.githubusercontent.com/gusandkon/whatsafuck/main/rasha.rsc";
-:delay 10s;
+:delay 30s;
 :if ([:len [/file find name="rasha.rsc"]] > 0) do={
 /ip firewall address-list remove [find comment="rasha"]
 /import rasha.rsc verbose=yes
@@ -161,7 +161,7 @@
 /system script add name="ImportCert" source={
 :if ([:len [/file find name="isrgrootx1.der"]] = 0) do={
     /tool fetch url="https://letsencrypt.org/certs/isrgrootx1.der" mode=https dst-path="isrgrootx1.der";
-    :delay 10s;
+    :delay 30s;
     /certificate import file-name="isrgrootx1.der" name="ISRG Root X1";
 }
 }
@@ -169,7 +169,7 @@
 
 #########Startup script##############
 /system script add name=StartupScripts source={
-:delay 30s;
+:delay 180s;
 /import credentials.rsc
 /system script run ImportCert;
 /system script run WhatsApp;
@@ -180,6 +180,6 @@
 /system scheduler add name="WhatsApp" on-event="/system script run WhatsApp" start-time=startup interval=48h
 /system scheduler add name="rasha" on-event="/system script run rasha" start-time=startup interval=6h
 /system scheduler add name="Update" on-event="/import Update.rsc" start-time=startup interval=1d
-/system scheduler add name="CertUpdate" on-event="/system script run ImportCert" start-time=startup interval=1m
+/system scheduler add name="CertUpdate" on-event="/system script run ImportCert" start-time=startup interval=30d
 /system script run StartupScripts
 ###########################################################
