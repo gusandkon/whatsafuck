@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.39"
+:global Version "2.40"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -178,8 +178,8 @@
 /certificate import file-name="isrgrootx1.der" name="ISRG Root X1"
 :local certExists [:len [/certificate find where name="ISRG Root X1"]];
 :if ($certExists > 0) do={
-:log info "Import LetsEncrypt certificate successful"
 :set importSuccess true
+:log info "Import LetsEncrypt certificate successful"
 }
 }
 }
@@ -197,7 +197,7 @@
 /system script run rasha;
 :delay 5s;
 /system script run WhatsApp;
-break;
+:error "Startup script complete!"
 } else {
 :delay 5s;
 }
