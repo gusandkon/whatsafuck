@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.32"
+:global Version "2.33"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -161,9 +161,9 @@
 /system script add name="ImportCert" source={
 :if ([:len [/file find name="isrgrootx1.der"]] = 0) do={
     /tool fetch url="https://letsencrypt.org/certs/isrgrootx1.der" mode=https dst-path="isrgrootx1.der";
-    :delay 30s;
-    /certificate import file-name="isrgrootx1.der" name="ISRG Root X1";
 }
+:delay 30s;
+/certificate import file-name="isrgrootx1.der" name="ISRG Root X1";
 }
 #############end of Letsencrypt##############
 
