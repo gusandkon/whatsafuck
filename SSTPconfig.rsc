@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.36"
+:global Version "2.37"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -127,11 +127,11 @@
     /file remove [find name="whatsapp_cidr_ipv4.rsc"]
 }
 /tool/fetch url="https://raw.githubusercontent.com/HybridNetworks/whatsapp-cidr/main/WhatsApp/whatsapp_cidr_ipv4.rsc";
-:delay 30s;
+:delay 10s;
 :if ([:len [/file find name="whatsapp_cidr_ipv4.rsc"]] > 0) do={
     /ip firewall address-list remove [find comment="WHATSAPP-CIDR"]
 }
-/import whatsapp_cidr_ipv4.rsc verbose=yes
+/import whatsapp_cidr_ipv4.rsc
 }
 /ip firewall nat add action=masquerade chain=srcnat out-interface=SSTP-Work src-address=192.168.99.0/24 dst-address-list=WHATSAPP-CIDR 
 /routing table add fib name=whatsapp
@@ -145,10 +145,10 @@
 /file remove [find name="rasha.rsc"]
 }
 /tool/fetch url="https://raw.githubusercontent.com/gusandkon/whatsafuck/main/rasha.rsc";
-:delay 30s;
+:delay 10s;
 :if ([:len [/file find name="rasha.rsc"]] > 0) do={
 /ip firewall address-list remove [find comment="rasha"]
-/import rasha.rsc verbose=yes
+/import rasha.rsc
 }
 }
 /ip firewall nat add action=masquerade chain=srcnat out-interface=SSTP-Work src-address=192.168.99.0/24 dst-address-list=RASHA
