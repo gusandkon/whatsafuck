@@ -1,7 +1,7 @@
 ####################### hAP ax config ##########################
 
 /import credentials.rsc
-:global Version "2.35"
+:global Version "2.36"
 :global USERNAME
 :global USERPASSWORD
 :global L2tpServer
@@ -183,8 +183,10 @@
 :if ($pingResult > 0) do={     
 /import credentials.rsc
 /system script run ImportCert;
-/system script run WhatsApp;
+:delay 5s;
 /system script run rasha;
+:delay 5s;
+/system script run WhatsApp;
 break;
 } else {
 :delay 5s;
